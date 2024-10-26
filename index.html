@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<body onload="getLocation()">
+
+<p>Your Location Details are Being Sent to the Server.</p>
+
+<p id="demo"></p>
+
+<script>
+var x = document.getElementById("demo");
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude +
+    "<br>Longitude: " + position.coords.longitude;
+
+    // Send location data to the server
+    fetch("/update-location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log("Location data sent successfully.");
+        } else {
+            console.error("Error sending location data.");
+        }
+    });
+}
+</script>
+</body>
+</html>
